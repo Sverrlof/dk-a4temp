@@ -1,5 +1,11 @@
 package no.ntnu.datakomm;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+
 /**
  * A Simple TCP client, used as a warm-up exercise for assignment A4.
  */
@@ -8,6 +14,9 @@ public class SimpleTcpClient {
     private static final String HOST = "localhost";
     // TCP port
     private static final int PORT = 1301;
+
+    private Socket socket = new Socket();
+
 
     /**
      * Run the TCP Client.
@@ -89,6 +98,13 @@ public class SimpleTcpClient {
      * @return True on success, false otherwise
      */
     private boolean closeConnection() {
+        Socket socket = new Socket();
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Socket error: " + e.getMessage());
+        }
         return false;
     }
 
@@ -102,6 +118,16 @@ public class SimpleTcpClient {
     private boolean connectToServer(String host, int port) {
         // TODO - implement this method
         // Remember to catch all possible exceptions that the Socket class can throw.
+
+        InetSocketAddress serverAddress = new InetSocketAddress(host, port);
+
+        try {
+            socket.connect(serverAddress);
+            System.out.println("Successful connection! ");
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Socket Error: " + e.getMessage());
+        }
         return false;
     }
 
@@ -130,6 +156,21 @@ public class SimpleTcpClient {
     private String readResponseFromServer() {
         // TODO - implement this method
         // Similarly to other methods, exception can happen while trying to read the input stream of the TCP Socket
+        try {
+            InputStream in = socket.getInputStream();
+            byte[] buffer = new byte[70];
+            int bytesRecieved;
+            do{
+                bytesRecieved = in.read(buffer);
+                String response = new String(buffer);
+                if (bytesRecieved > 0) {
+                    System.out.print(response);
+                }
+            } while(bytesRecieved > 0);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Error: " + e.getMessage());
+        }
         return null;
     }
 
