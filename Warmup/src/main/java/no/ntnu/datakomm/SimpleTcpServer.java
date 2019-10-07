@@ -18,7 +18,7 @@ public class SimpleTcpServer {
     public void run() {
         try{
             ServerSocket welcomeSocket = new ServerSocket(PORT);
-            System.out.println("Server started on port" + PORT);
+            System.out.println("Server started on port " + PORT);
             boolean mustRun = true;
 
             while (mustRun) {

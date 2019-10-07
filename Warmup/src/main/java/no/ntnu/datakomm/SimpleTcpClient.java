@@ -1,15 +1,9 @@
 package no.ntnu.datakomm;
 
-<<<<<<< Updated upstream
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-=======
 import java.io.OutputStream;
-import java.io.PrintWriter;
->>>>>>> Stashed changes
 
 /**
  * A Simple TCP client, used as a warm-up exercise for assignment A4.
@@ -110,7 +104,7 @@ public class SimpleTcpClient {
             e.printStackTrace();
             System.out.println("Socket error: " + e.getMessage());
         }
-        return false;
+        return this.socket.isClosed();
     }
 
     /**
@@ -121,6 +115,7 @@ public class SimpleTcpClient {
      * @return True when connection established, false otherwise
      */
     private boolean connectToServer(String host, int port) {
+
         // TODO - implement this method
         // Remember to catch all possible exceptions that the Socket class can throw.
 
@@ -128,12 +123,13 @@ public class SimpleTcpClient {
 
         try {
             socket.connect(serverAddress);
+
             System.out.println("Successful connection! ");
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Socket Error: " + e.getMessage());
         }
-        return false;
+        return this.socket.isConnected();
     }
 
     /**
@@ -150,23 +146,33 @@ public class SimpleTcpClient {
         // * Connection not opened.
         // * What is the request is null or empty?
 
-        if(!ConnectionCLosed) {
-            if(!ConnectionLost) {
-                if(ConnectionOpen) {
-                    OutputStream out = serverAddress.getOutputStream();
-                    PrintWriter writer = new PrintWriter(out, true);
-                    writer.println(request);
-                    writer.println("");
-                } else {
-                    log("ERROR: Connection is not open");
-                }
-            } else {
-                log("ERROR: Internet connection lost");
-            }
-        } else {
-            log("ERROR: Connection closed by remote host");}
+        //if(!ConnectionClosed) {
+          //  if(!ConnectionLost) {
+            //    if(ConnectionOpen) {
+        boolean messageStatus = false;
 
-    return false;
+        try {
+            OutputStream out = socket.getOutputStream();
+            PrintWriter writer = new PrintWriter(out, true);
+            writer.println(request);
+            writer.println("");
+
+            messageStatus = true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+              //  } else {
+                //    log("ERROR: Connection is not open");
+              //  }
+            //} else {
+            //    log("ERROR: Internet connection lost");
+            //}
+        //} else {
+          //  log("ERROR: Connection closed by remote host");}
+
+    return messageStatus;
     }
 
     /**
@@ -178,23 +184,35 @@ public class SimpleTcpClient {
     private String readResponseFromServer() {
         // TODO - implement this method
         // Similarly to other methods, exception can happen while trying to read the input stream of the TCP Socket
+        String serverResponse = null;
         try {
-            InputStream in = socket.getInputStream();
-            byte[] buffer = new byte[70];
-            int bytesRecieved;
-            do{
-                bytesRecieved = in.read(buffer);
-                String response = new String(buffer);
-                if (bytesRecieved > 0) {
-                    System.out.print(response);
+            InputStream in = this.socket.getInputStream();
+            InputStreamReader reader = new InputStreamReader(in);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String oneResponseLine;
+
+            do {
+                oneResponseLine = bufferedReader.readLine();
+
+                if (oneResponseLine != null) {
+
+
+                    if (serverResponse == null) {
+                        serverResponse = oneResponseLine;
+                    } else {
+
+                        serverResponse = serverResponse + oneResponseLine;
+                    }
                 }
-            } while(bytesRecieved > 0);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Error: " + e.getMessage());
+            }
+            while (oneResponseLine != null);
         }
-        return null;
-    }
+         catch(IOException e){
+                e.printStackTrace();
+                System.out.println("Error: " + e.getMessage());
+            }
+            return serverResponse;
+        }
 
     /**
      * Log a message to the system console.
