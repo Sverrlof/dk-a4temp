@@ -1,10 +1,15 @@
 package no.ntnu.datakomm;
 
+<<<<<<< Updated upstream
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+=======
+import java.io.OutputStream;
+import java.io.PrintWriter;
+>>>>>>> Stashed changes
 
 /**
  * A Simple TCP client, used as a warm-up exercise for assignment A4.
@@ -144,7 +149,24 @@ public class SimpleTcpClient {
         // * Internet connection lost, timeout in transmission
         // * Connection not opened.
         // * What is the request is null or empty?
-        return false;
+
+        if(!ConnectionCLosed) {
+            if(!ConnectionLost) {
+                if(ConnectionOpen) {
+                    OutputStream out = serverAddress.getOutputStream();
+                    PrintWriter writer = new PrintWriter(out, true);
+                    writer.println(request);
+                    writer.println("");
+                } else {
+                    log("ERROR: Connection is not open");
+                }
+            } else {
+                log("ERROR: Internet connection lost");
+            }
+        } else {
+            log("ERROR: Connection closed by remote host");}
+
+    return false;
     }
 
     /**
