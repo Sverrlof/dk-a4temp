@@ -146,9 +146,6 @@ public class SimpleTcpClient {
         // * Connection not opened.
         // * What is the request is null or empty?
 
-        //if(!ConnectionClosed) {
-          //  if(!ConnectionLost) {
-            //    if(ConnectionOpen) {
         boolean messageStatus = false;
 
         try {
@@ -162,15 +159,6 @@ public class SimpleTcpClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-              //  } else {
-                //    log("ERROR: Connection is not open");
-              //  }
-            //} else {
-            //    log("ERROR: Internet connection lost");
-            //}
-        //} else {
-          //  log("ERROR: Connection closed by remote host");}
 
     return messageStatus;
     }
